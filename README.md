@@ -1,5 +1,5 @@
 # 🧹 SQL Data Cleaning – Layoffs Dataset
-
+<img width="1653" height="706" alt="Image" src="https://github.com/user-attachments/assets/861ba266-488a-45a8-89f3-9910b6344f86" />
 ## 📘 Project Description
 
 This project demonstrates a complete data cleaning pipeline using SQL (MySQL) on a real-world layoffs dataset. The dataset included inconsistencies, missing values, formatting issues, and duplicate rows. The goal was to transform it into an analysis-ready state suitable for dashboards, reporting, and deeper analysis.
