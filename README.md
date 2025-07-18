@@ -1,63 +1,79 @@
-# Data-Cleaning-Project-MySQL-
-Cleaned and standardized a dataset of global tech layoffs to enable accurate trend analysis.
+# 🧹 SQL Data Cleaning – Layoffs Dataset
 
-**1. Duplicate Removal**
--- Created staging table and identified duplicates
-CREATE TABLE layoffs_staging LIKE layoffs;
-INSERT INTO layoffs_staging SELECT * FROM layoffs;
+## 📘 Project Description
 
--- Used window function to flag duplicates
-SELECT *,
-  ROW_NUMBER() OVER(
-    PARTITION BY company, location, industry, 
-    total_laid_off, percentage_laid_off, 
-    `date`, stage, country, funds_raised_millions
-  ) AS row_num
-FROM layoffs_staging;
+This project demonstrates a complete data cleaning pipeline using SQL (MySQL) on a real-world layoffs dataset. The dataset included inconsistencies, missing values, formatting issues, and duplicate rows. The goal was to transform it into an analysis-ready state suitable for dashboards, reporting, and deeper analysis.
 
--- Created new table and removed duplicates
-CREATE TABLE `layoffs_staging2` (
-  `company` text,
-  `location` text,
-  `industry` text,
-  `total_laid_off` int DEFAULT NULL,
-  `percentage_laid_off` text,
-  `date` text,
-  `stage` text,
-  `country` text,
-  `funds_raised_millions` int DEFAULT NULL,
-  `row_num` int
-);
+By **Shoeb Md Ashraf**
 
-DELETE FROM layoffs_staging2 WHERE row_num > 1;
+---
 
-**2. Data Standardization**
-   -- Fixed inconsistent industry classifications
-UPDATE layoffs_staging2
-SET industry = 'Crypto'
-WHERE industry LIKE 'Crypto%';
+## 🛠 Tools Used
 
--- Corrected country name formatting
-UPDATE layoffs_staging2
-SET country = TRIM(TRAILING '.' FROM country)
-WHERE country LIKE 'United States%';
+- SQL (MySQL)
+- Excel
 
--- Converted text dates to DATE format
-UPDATE layoffs_staging2
-SET `date` = STR_TO_DATE(`date`, '%m/%d/%Y');
+---
 
-ALTER TABLE layoffs_staging2
-MODIFY COLUMN `date` DATE;
+## 🧾 Overview
 
-**3. Handling Missing Data**
-   -- Populated blank industry fields using self-join
-UPDATE layoffs_staging2 t1
-JOIN layoffs_staging2 t2 ON t1.company = t2.company
-SET t1.industry = t2.industry
-WHERE (t1.industry IS NULL OR t1.industry = '')
-AND t2.industry IS NOT NULL;
+The original dataset was messy and required extensive cleaning:
+- Duplicate rows with no unique identifier
+- Inconsistent industry and country values
+- Trailing spaces and characters in text fields
+- Improper date format stored as text
+- Missing values in important fields
 
--- Removed records with no layoff data
-DELETE FROM layoffs_staging3
-WHERE total_laid_off IS NULL
-AND percentage_laid_off IS NULL;
+---
+
+## ✅ Key Cleaning Steps
+
+1. **Removed Duplicates**
+   - Used `ROW_NUMBER()` with `PARTITION BY` to identify exact duplicate rows.
+   - Retained only the first instance (`row_num = 1`) and deleted the rest.
+
+2. **Standardized Text Fields**
+   - Applied `TRIM()` to remove extra spaces.
+   - Standardized categories (e.g., `Crypto` → `Cryptocurrency`).
+   - Cleaned country names (`United States.` → `United States`).
+
+3. **Handled Missing Values**
+   - Deleted rows where both `total_laid_off` and `percentage_laid_off` were NULL.
+   - Filled missing `industry` values using a `SELF JOIN` based on company name.
+
+4. **Fixed Date Formatting**
+   - Converted date strings (MM/DD/YYYY) to proper `DATE` format using `STR_TO_DATE()`.
+   - Altered the column type from `TEXT` to `DATE`.
+
+5. **Final Touches**
+   - Dropped intermediate columns like `row_num`.
+   - Verified structure and integrity of final dataset.
+
+---
+
+## 📈 Outcome
+
+The cleaned dataset is ready for:
+- Exploratory Data Analysis (EDA)
+- Business dashboards (e.g., Power BI, Tableau)
+- Reporting & time-series trend analysis
+
+🔗 You can find the follow-up SQL EDA project using this dataset in my GitHub projects section.
+
+---
+
+## 📬 Contact
+
+- 📧 Email: smashraf110@gmail.com   
+- 💼 [LinkedIn – Shoeb Md Ashraf](https://www.linkedin.com/in/shoebmdashraf/)  
+- 💻 [GitHub – smashraf110](https://github.com/smashraf110)
+
+---
+
+## 📂 File Structure
+
+```bash
+Layoffs-SQL-Cleaning/
+├── layoffs_cleaning_script.sql
+├── README.md
+└── (Optional) sample_screenshots/
